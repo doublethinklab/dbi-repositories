@@ -4,7 +4,6 @@ from typing import Any, Dict, Generator, List, MutableMapping, Optional, \
 
 import psycopg2
 from psycopg2 import extensions
-from psycopg2.errors import UniqueViolation
 from psycopg2.extras import RealDictCursor
 
 from dbi_repositories.base import Repository
