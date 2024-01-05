@@ -36,16 +36,15 @@ class AsyncPostgresRepository:
         self.table_name = table_name
         self.primary_keys = primary_keys
 
-    async def _execute_generator_return(
+    async def _execute_iterable_return(
         self,
         sql: str | psycopg.sql.Composed,
         values: Optional[List[Any]] = None
-    ) -> Generator:
+    ) -> List:
         async with await self.connection_factory() as conn:
             async with conn.cursor() as cursor:
                 await cursor.execute(sql, values)
-                async for item in cursor:
-                    yield dict(item)
+                return [dict(item) async for item in cursor]
 
     async def _execute_no_return(
         self,
