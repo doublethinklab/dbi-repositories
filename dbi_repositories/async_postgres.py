@@ -1,3 +1,5 @@
+import psycopg.sql
+
 from postgres import ConnectionFactory
 from psycopg import AsyncConnection
 from typing import Optional, List, Any, Generator
@@ -36,18 +38,18 @@ class AsyncPostgresRepository:
 
     async def _execute_generator_return(
         self,
-        sql: str,
+        sql: str | psycopg.sql.Composed,
         values: Optional[List[Any]] = None
     ) -> Generator:
         async with await self.connection_factory() as conn:
             async with conn.cursor() as cursor:
                 await cursor.execute(sql, values)
-                for item in cursor:
+                async for item in cursor:
                     yield dict(item)
 
     async def _execute_no_return(
         self,
-        sql: str,
+        sql: str | psycopg.sql.Composed,
         values: Optional[List[Any]] = None
     ) -> None:
         async with await self.connection_factory() as conn:
@@ -56,7 +58,7 @@ class AsyncPostgresRepository:
 
     async def _execute_single_return(
         self,
-        sql: str,
+        sql: str | psycopg.sql.Composed,
         values: Optional[List[Any]] = None
     ) -> Any:
         async with await self.connection_factory() as conn:
