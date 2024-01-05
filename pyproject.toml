@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.10"
 psycopg2-binary = "^2.9.9"
+psycopg = {extras = ["binary"], version = "^3.1" }
 pymongo = ">=4.5"
 pydash = "^7.0.6"
 
