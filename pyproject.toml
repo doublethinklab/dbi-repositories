@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dbi-repositories"
-version = "2.3.5"
+version = "2.4.0"
 description = "Reusable Repository pattern implementations for multiple DBs."
 authors = ["Tim Niven <tim@doublethinklab.org>"]
 readme = "README.md"
