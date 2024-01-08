@@ -50,7 +50,8 @@ class AsyncPostgresRepository:
             async with connection.cursor() as cursor:
                 if isinstance(query, psycopg.sql.Composed):
                     query = query.as_bytes(cursor)
-                return await cursor.execute(query=query, params=params, prepare=False)
+                await cursor.execute(query=query, params=params, prepare=False)
+                return [dict(item) async for item in cursor]
 
     async def _execute_no_return(
         self,
