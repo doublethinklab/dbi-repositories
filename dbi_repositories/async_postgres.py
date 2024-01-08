@@ -47,8 +47,6 @@ class AsyncPostgresRepository:
         connection = await AsyncConnection.connect(row_factory=dict_row, **self.connection_factory())
         async with connection:
             async with connection.cursor() as cursor:
-                if isinstance(query, psycopg.sql.Composed):
-                    query = query.as_bytes(cursor)
                 await cursor.execute(query=query, params=params, prepare=False)
                 return [item async for item in cursor]
 
@@ -60,8 +58,6 @@ class AsyncPostgresRepository:
         connection = await AsyncConnection.connect(**self.connection_factory())
         async with connection:
             async with connection.cursor() as cursor:
-                if isinstance(query, psycopg.sql.Composed):
-                    query = query.as_bytes(cursor)
                 await cursor.execute(query=query, params=params, prepare=False)
 
     async def _execute_single_return(
@@ -73,8 +69,6 @@ class AsyncPostgresRepository:
         connection = await AsyncConnection.connect(row_factory=dict_row, **self.connection_factory())
         async with connection:
             async with connection.cursor() as cursor:
-                if isinstance(query, psycopg.sql.Composed):
-                    query = query.as_bytes(cursor)
                 await cursor.execute(query=query, params=params, prepare=False)
                 item = await cursor.fetchone()
                 if item:
