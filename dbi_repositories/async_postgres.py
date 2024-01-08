@@ -48,7 +48,7 @@ class AsyncPostgresRepository:
         connection = await AsyncConnection.connect(**self.connection_factory())
         async with connection:
             async with connection.cursor() as cursor:
-                return await cursor.execute(query=query, params=params)
+                return await cursor.execute(query=query, params=params, prepare=False)
 
     async def _execute_no_return(
         self,
@@ -58,7 +58,7 @@ class AsyncPostgresRepository:
         connection = await AsyncConnection.connect(**self.connection_factory())
         async with connection:
             async with connection.cursor() as cursor:
-                await cursor.execute(query=query, params=params)
+                await cursor.execute(query=query, params=params, prepare=False)
 
     async def _execute_single_return(
         self,
@@ -68,7 +68,7 @@ class AsyncPostgresRepository:
         connection = await AsyncConnection.connect(**self.connection_factory())
         async with connection:
             async with connection.cursor() as cursor:
-                await cursor.execute(query=query, params=params)
+                await cursor.execute(query=query, params=params, prepare=False)
                 item = await cursor.fetchone()
                 if item:
                     return dict(item)
