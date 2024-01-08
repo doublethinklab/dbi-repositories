@@ -50,7 +50,7 @@ class AsyncPostgresRepository:
             async with connection.cursor() as cursor:
                 if isinstance(query, psycopg.sql.Composed):
                     query = query.as_string(cursor)
-                return await cursor.execute(query=query, params=params)
+                return await cursor.execute(query=query, params=params, prepare=False)
 
     async def _execute_no_return(
         self,
@@ -62,7 +62,7 @@ class AsyncPostgresRepository:
             async with connection.cursor() as cursor:
                 if isinstance(query, psycopg.sql.Composed):
                     query = query.as_string(cursor)
-                await cursor.execute(query=query, params=params)
+                await cursor.execute(query=query, params=params, prepare=False)
 
     async def _execute_single_return(
         self,
@@ -75,7 +75,7 @@ class AsyncPostgresRepository:
             async with connection.cursor() as cursor:
                 if isinstance(query, psycopg.sql.Composed):
                     query = query.as_string(cursor)
-                await cursor.execute(query=query, params=params)
+                await cursor.execute(query=query, params=params, prepare=False)
                 item = await cursor.fetchone()
                 if item:
                     return dict(item)
