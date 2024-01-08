@@ -1,6 +1,6 @@
 import psycopg.sql
 
-from postgres import ConnectionFactory
+from dbi_repositories.postgres import ConnectionFactory
 from psycopg import AsyncConnection
 from typing import Optional, List, Any, Generator
 
@@ -43,8 +43,7 @@ class AsyncPostgresRepository:
     ) -> List:
         async with await self.connection_factory() as conn:
             async with conn.cursor() as cursor:
-                await cursor.execute(sql, values)
-                return [dict(item) async for item in cursor]
+                return await cursor.execute(sql, values)
 
     async def _execute_no_return(
         self,
