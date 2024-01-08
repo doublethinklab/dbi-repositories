@@ -3,11 +3,13 @@ import psycopg.sql
 from dbi_repositories.postgres import ConnectionFactory
 from psycopg import AsyncConnection
 from typing import Optional, List, Any, Generator
+from contextlib import asynccontextmanager
 
 
 class AsyncConnectionFactory(ConnectionFactory):
     # Subclassing to reuse the __init__ definition
 
+    @asynccontextmanager
     async def __call__(
             self,
             db_name: Optional[str] = None
