@@ -8,23 +8,23 @@ from contextlib import asynccontextmanager
 
 class AsyncConnectionFactory(ConnectionFactory):
     # Subclassing to reuse the __init__ definition
+    # This class is only for compatibility to `postgres.py`
 
-    async def __call__(
+    def __call__(
             self,
             db_name: Optional[str] = None
-    ) -> AsyncConnection:
+    ) -> dict:
         if not db_name:
             db_name = self.db_name
 
-        async with await AsyncConnection.connect(
+        return dict(
             host=self.host,
             port=self.port,
             user=self.user,
             password=self.password,
             dbname=db_name,
             sslmode='require' if self.ssl else 'allow'
-        ) as conn:
-            yield conn
+        )
 
 
 
@@ -45,7 +45,7 @@ class AsyncPostgresRepository:
         sql: str | psycopg.sql.Composed,
         values: Optional[List[Any]] = None
     ) -> List:
-        connection = self.connection_factory()
+        connection = await AsyncConnection.connect(**self.connection_factory())
         async with connection:
             async with connection.cursor() as cursor:
                 return await cursor.execute(sql, values)
@@ -55,7 +55,7 @@ class AsyncPostgresRepository:
         sql: str | psycopg.sql.Composed,
         values: Optional[List[Any]] = None
     ) -> None:
-        connection = self.connection_factory()
+        connection = await AsyncConnection.connect(**self.connection_factory())
         async with connection:
             async with connection.cursor() as cursor:
                 await cursor.execute(sql, values)
@@ -65,7 +65,7 @@ class AsyncPostgresRepository:
         sql: str | psycopg.sql.Composed,
         values: Optional[List[Any]] = None
     ) -> Any:
-        connection = self.connection_factory()
+        connection = await AsyncConnection.connect(**self.connection_factory())
         async with connection:
             async with connection.cursor() as cursor:
                 await cursor.execute(sql, values)
