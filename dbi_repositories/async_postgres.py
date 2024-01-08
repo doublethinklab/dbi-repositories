@@ -43,8 +43,7 @@ class AsyncPostgresRepository:
         sql: str | psycopg.sql.Composed,
         values: Optional[List[Any]] = None
     ) -> List:
-        connection = await self.connection_factory()
-        async with connection:
+        async with await self.connection_factory() as connection:
             async with connection.cursor() as cursor:
                 return await cursor.execute(sql, values)
 
@@ -53,8 +52,7 @@ class AsyncPostgresRepository:
         sql: str | psycopg.sql.Composed,
         values: Optional[List[Any]] = None
     ) -> None:
-        connection = await self.connection_factory()
-        async with connection:
+        async with await self.connection_factory() as connection:
             async with connection.cursor() as cursor:
                 await cursor.execute(sql, values)
 
@@ -63,8 +61,7 @@ class AsyncPostgresRepository:
         sql: str | psycopg.sql.Composed,
         values: Optional[List[Any]] = None
     ) -> Any:
-        connection = await self.connection_factory()
-        async with connection:
+        async with await self.connection_factory() as connection:
             async with connection.cursor() as cursor:
                 await cursor.execute(sql, values)
                 item = await cursor.fetchone()
