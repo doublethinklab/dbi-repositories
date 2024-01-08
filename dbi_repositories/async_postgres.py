@@ -16,13 +16,16 @@ class AsyncConnectionFactory(ConnectionFactory):
         if not db_name:
             db_name = self.db_name
 
-        return await AsyncConnection.connect(
+        async with await AsyncConnection.connect(
             host=self.host,
             port=self.port,
             user=self.user,
             password=self.password,
             dbname=db_name,
-            sslmode='require' if self.ssl else 'allow')
+            sslmode='require' if self.ssl else 'allow'
+        ) as conn:
+            yield conn
+
 
 
 class AsyncPostgresRepository:
