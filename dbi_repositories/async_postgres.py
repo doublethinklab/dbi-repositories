@@ -42,33 +42,33 @@ class AsyncPostgresRepository:
 
     async def _execute_iterable_return(
         self,
-        sql: str | psycopg.sql.Composed,
-        values: Optional[List[Any]] = None
+        query: str | psycopg.sql.Composed,
+        params: Optional[List[Any]] = None
     ) -> List:
         connection = await AsyncConnection.connect(**self.connection_factory())
         async with connection:
             async with connection.cursor() as cursor:
-                return await cursor.execute(sql, values)
+                return await cursor.execute(query=query, params=params)
 
     async def _execute_no_return(
         self,
-        sql: str | psycopg.sql.Composed,
-        values: Optional[List[Any]] = None
+        query: str | psycopg.sql.Composed,
+        params: Optional[List[Any]] = None
     ) -> None:
         connection = await AsyncConnection.connect(**self.connection_factory())
         async with connection:
             async with connection.cursor() as cursor:
-                await cursor.execute(sql, values)
+                await cursor.execute(query=query, params=params)
 
     async def _execute_single_return(
         self,
-        sql: str | psycopg.sql.Composed,
-        values: Optional[List[Any]] = None
+        query: str | psycopg.sql.Composed,
+        params: Optional[List[Any]] = None
     ) -> Any:
         connection = await AsyncConnection.connect(**self.connection_factory())
         async with connection:
             async with connection.cursor() as cursor:
-                await cursor.execute(sql, values)
+                await cursor.execute(query=query, params=params)
                 item = await cursor.fetchone()
                 if item:
                     return dict(item)
