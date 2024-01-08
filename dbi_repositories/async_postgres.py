@@ -9,7 +9,6 @@ from contextlib import asynccontextmanager
 class AsyncConnectionFactory(ConnectionFactory):
     # Subclassing to reuse the __init__ definition
 
-    @asynccontextmanager
     async def __call__(
             self,
             db_name: Optional[str] = None
@@ -17,7 +16,7 @@ class AsyncConnectionFactory(ConnectionFactory):
         if not db_name:
             db_name = self.db_name
 
-        return AsyncConnection.connect(
+        return await AsyncConnection.connect(
             host=self.host,
             port=self.port,
             user=self.user,
@@ -43,7 +42,7 @@ class AsyncPostgresRepository:
         sql: str | psycopg.sql.Composed,
         values: Optional[List[Any]] = None
     ) -> List:
-        async with await self.connection_factory() as connection:
+        async with self.connection_factory() as connection:
             async with connection.cursor() as cursor:
                 return await cursor.execute(sql, values)
 
@@ -52,7 +51,7 @@ class AsyncPostgresRepository:
         sql: str | psycopg.sql.Composed,
         values: Optional[List[Any]] = None
     ) -> None:
-        async with await self.connection_factory() as connection:
+        async with self.connection_factory() as connection:
             async with connection.cursor() as cursor:
                 await cursor.execute(sql, values)
 
@@ -61,7 +60,7 @@ class AsyncPostgresRepository:
         sql: str | psycopg.sql.Composed,
         values: Optional[List[Any]] = None
     ) -> Any:
-        async with await self.connection_factory() as connection:
+        async with self.connection_factory() as connection:
             async with connection.cursor() as cursor:
                 await cursor.execute(sql, values)
                 item = await cursor.fetchone()
