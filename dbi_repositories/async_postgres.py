@@ -3,8 +3,7 @@ import psycopg.sql
 from dbi_repositories.postgres import ConnectionFactory
 from psycopg import AsyncConnection
 from typing import Optional, List, Any, Generator
-from contextlib import asynccontextmanager
-
+from psycopg.rows import dict_row
 
 class AsyncConnectionFactory(ConnectionFactory):
     # Subclassing to reuse the __init__ definition
@@ -45,13 +44,13 @@ class AsyncPostgresRepository:
         query: str | psycopg.sql.Composed,
         params: Optional[List[Any]] = None
     ) -> List:
-        connection = await AsyncConnection.connect(**self.connection_factory())
+        connection = await AsyncConnection.connect(row_factory=dict_row, **self.connection_factory())
         async with connection:
             async with connection.cursor() as cursor:
                 if isinstance(query, psycopg.sql.Composed):
                     query = query.as_bytes(cursor)
                 await cursor.execute(query=query, params=params, prepare=False)
-                return [dict(item) async for item in cursor]
+                return [item async for item in cursor]
 
     async def _execute_no_return(
         self,
@@ -71,7 +70,7 @@ class AsyncPostgresRepository:
         params: Optional[List[Any]] = None
     ) -> Any:
 
-        connection = await AsyncConnection.connect(**self.connection_factory())
+        connection = await AsyncConnection.connect(row_factory=dict_row, **self.connection_factory())
         async with connection:
             async with connection.cursor() as cursor:
                 if isinstance(query, psycopg.sql.Composed):
@@ -79,6 +78,6 @@ class AsyncPostgresRepository:
                 await cursor.execute(query=query, params=params, prepare=False)
                 item = await cursor.fetchone()
                 if item:
-                    return dict(item)
+                    return item
                 else:
                     return None
