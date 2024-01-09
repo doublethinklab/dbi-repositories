@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dbi-repositories"
-version = "2.3.5"
+version = "3.0.0"
 description = "Reusable Repository pattern implementations for multiple DBs."
 authors = ["Tim Niven <tim@doublethinklab.org>"]
 readme = "README.md"
@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.10"
 psycopg2-binary = "^2.9.9"
+psycopg = {extras = ["binary"], version = "^3.1" }
 pymongo = ">=4.5"
 pydash = "^7.0.6"
 
